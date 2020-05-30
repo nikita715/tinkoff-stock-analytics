@@ -34,6 +34,7 @@ document.head.insertAdjacentHTML("beforeend",
         top: 0;
         height: 100%;
         margin-left: 100%;
+        padding: 22px;
     }
     .stock-analytics-link {
         width: 20px;
@@ -44,6 +45,7 @@ document.head.insertAdjacentHTML("beforeend",
     .stock-analytics-container-in {
         height: 20px;
         margin: 5px 0 5px 5px;
+        z-index: 10000;
     }
     .stock-analytics-container-in:last-child {
         margin-right: 5px;
@@ -53,17 +55,22 @@ document.head.insertAdjacentHTML("beforeend",
 
 let addStockAdvice = (e) => {
     if (!e.hasAttribute("hasStockAdvice")) {
-        let tag = e.getElementsByClassName("Caption__subcaption_39Lm3")[0].textContent;
-        let name = e.getElementsByClassName("SecurityColumn__nameWrapper_3gZum")[0].textContent;
+        let stockTag = e.getElementsByClassName("Caption__subcaption_39Lm3")[0].textContent;
+        
+        let isPersonalPage = window.location.href.indexOf('https://www.tinkoff.ru/invest/broker_account/') === 0;
+        
+        let stockName = isPersonalPage
+            ? e.getElementsByClassName("PortfolioTablePure__subcaptionTicker_dE3m0")[0]
+            : e.getElementsByClassName("SecurityColumn__nameWrapper_3gZum")[0];
 
-        let eChild = e.getElementsByClassName("Table__cell_3dA6T")[2];
+        let eChild = e.getElementsByClassName("Table__cell_3dA6T")[isPersonalPage ? 3 : 2];
 
         e.addEventListener("mouseenter", function( event ) {
             let container = document.createElement("div");
             container.setAttribute("class", "stock-analytics-container");
             eChild.appendChild(container);
             Object.keys(adviceLinks).forEach((name) => {
-                let link = adviceLinks[name].replace("$tag", tag);
+                let link = adviceLinks[name].replace("$tag", stockTag);
                 let linkElement = document.createElement("a");
                 linkElement.setAttribute("class", "stock-analytics-container-in");
                 linkElement.setAttribute("href", link);
@@ -73,7 +80,10 @@ let addStockAdvice = (e) => {
         });
 
         e.addEventListener("mouseleave", function( event ) {
-            eChild.removeChild(eChild.getElementsByClassName("stock-analytics-container")[0]);
+            let container = eChild.getElementsByClassName("stock-analytics-container")[0];
+            if (container !== undefined) {
+                container.parentNode.removeChild(container);
+            }
         });
 
         e.setAttribute("hasStockAdvice", "");

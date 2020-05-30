@@ -14,5 +14,8 @@
    limitations under the License.
 */
 
-Array.from(document.getElementsByClassName("Table__row_clickable_2VMNN"))
-    .forEach(addStockAdvice);
+try {
+    Array.from(document.getElementsByClassName("Table__row_clickable_2VMNN"))
+        .forEach(addStockAdvice);
+} catch(e) {
+}
