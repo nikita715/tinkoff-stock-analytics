@@ -14,14 +14,6 @@
    limitations under the License.
 */
 
-let adviceLinks = {
-    "maw": "https://www.marketwatch.com/investing/stock/$tag/analystestimates",
-    "cnn": "https://money.cnn.com/quote/forecast/forecast.html?symb=$tag",
-    "bui": "https://markets.businessinsider.com/stocks/$tag-stock",
-    "tip": "https://www.tipranks.com/stocks/$tag/price-target",
-    "yah": "https://finance.yahoo.com/quote/$tag/"
-};
-
 document.head.insertAdjacentHTML("beforeend",
 `<style>
     .Table__cell_3dA6T {
@@ -52,6 +44,14 @@ document.head.insertAdjacentHTML("beforeend",
     }
 </style>`);
 
+let adviceLinks = {
+    "yah": "https://finance.yahoo.com/quote/$tag/",
+    "inv": "https://research.investors.com/quote.aspx?symbol=$tag",
+    "tip": "https://www.tipranks.com/stocks/$tag/stock-analysis",
+    "cnn": "https://money.cnn.com/quote/quote.html?symb=$tag",
+    "maw": "https://www.marketwatch.com/investing/stock/$tag",
+    "bui": "https://markets.businessinsider.com/stocks/$tag-stock",
+};
 
 let addStockAdvice = (e) => {
     if (!e.hasAttribute("hasStockAdvice")) {
@@ -65,21 +65,18 @@ let addStockAdvice = (e) => {
 
         let eChild = e.getElementsByClassName("Table__cell_3dA6T")[isPersonalPage ? 3 : 2];
 
-        e.addEventListener("mouseenter", function( event ) {
+        e.addEventListener("mouseenter", function(event) {
             let container = document.createElement("div");
             container.setAttribute("class", "stock-analytics-container");
             eChild.appendChild(container);
-            Object.keys(adviceLinks).forEach((name) => {
-                let link = adviceLinks[name].replace("$tag", stockTag);
-                let linkElement = document.createElement("a");
-                linkElement.setAttribute("class", "stock-analytics-container-in");
-                linkElement.setAttribute("href", link);
-                linkElement.innerHTML = name;
-                container.appendChild(linkElement);
-            });
+            
+            let taggedAdviceLinks = createMapOfTaggedLinks(stockTag);
+            
+            addLinkToAdvice(container, taggedAdviceLinks);
+            addLinkToAllAdvices(container, taggedAdviceLinks);
         });
 
-        e.addEventListener("mouseleave", function( event ) {
+        e.addEventListener("mouseleave", function(event) {
             let container = eChild.getElementsByClassName("stock-analytics-container")[0];
             if (container !== undefined) {
                 container.parentNode.removeChild(container);
@@ -89,6 +86,40 @@ let addStockAdvice = (e) => {
         e.setAttribute("hasStockAdvice", "");
     }
 };
+
+function createMapOfTaggedLinks(stockTag) {
+    return Object.keys(adviceLinks).map((name) => {
+        let taggedLink = adviceLinks[name].replace("$tag", stockTag);
+        return {key: name, val: taggedLink};
+    }).reduce(function(map, obj) {
+        map[obj.key] = obj.val;
+        return map;
+    }, {});;
+}
+
+function addLinkToAdvice(container, taggedAdviceLinks) {
+    Object.keys(taggedAdviceLinks).forEach((name) => {
+        let taggedLink = taggedAdviceLinks[name];
+        let linkElement = document.createElement("a");
+        linkElement.setAttribute("class", "stock-analytics-container-in");
+        linkElement.setAttribute("href", taggedLink);
+        linkElement.innerHTML = name;
+        container.appendChild(linkElement);
+    });
+}
+
+function addLinkToAllAdvices(container, taggedAdviceLinks) {
+    let linkElement = document.createElement("a");
+    linkElement.setAttribute("class", "stock-analytics-container-in");
+    linkElement.innerHTML = "all";
+    container.appendChild(linkElement);
+
+    linkElement.addEventListener("click", function(event) {
+        Object.keys(taggedAdviceLinks).forEach((name) => {
+            window.open(taggedAdviceLinks[name], "_blank");
+        });
+    });
+}
 
 Array.from(document.getElementsByClassName("Table__row_clickable_2VMNN"))
     .forEach(addStockAdvice);
