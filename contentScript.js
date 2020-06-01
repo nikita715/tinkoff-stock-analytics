@@ -103,6 +103,7 @@ function addLinkToAdvice(container, taggedAdviceLinks) {
         let linkElement = document.createElement("a");
         linkElement.setAttribute("class", "stock-analytics-container-in");
         linkElement.setAttribute("href", taggedLink);
+        linkElement.setAttribute("target", "_blank");
         linkElement.innerHTML = name;
         container.appendChild(linkElement);
     });
