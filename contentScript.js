@@ -46,6 +46,7 @@ document.head.insertAdjacentHTML("beforeend",
 
 let adviceLinks = {
     "yah": "https://finance.yahoo.com/quote/$tag/",
+    "bar": "https://www.barrons.com/quote/stock/$tag",
     "inv": "https://research.investors.com/quote.aspx?symbol=$tag",
     "tip": "https://www.tipranks.com/stocks/$tag/stock-analysis",
     "cnn": "https://money.cnn.com/quote/quote.html?symb=$tag",
