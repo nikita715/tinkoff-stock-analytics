@@ -9,7 +9,11 @@
     "persistent": false
   },
   "content_scripts": [{
-    "matches": ["<all_urls>"],
+    "matches": [
+        "https://www.tinkoff.ru/invest/stocks/",
+        "https://www.tinkoff.ru/invest/favorites/",
+        "https://www.tinkoff.ru/invest/broker_account/"
+    ],
     "js": ["contentScript.js"]
   }],
   "permissions": [
