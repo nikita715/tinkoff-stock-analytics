@@ -1,12 +1,13 @@
 # tinkoff-stock-analytics
-Links to stock analytics in stock list
+Links to stock analytics in your Tinkoff stock list
 
 Supported sites:
 - finance.yahoo.com
+- fool.com
+- money.cnn.com
+- tipranks.com
 - barrons.com
 - research.investors.com
-- tipranks.com
-- money.cnn.com
 - marketwatch.com
 - markets.businessinsider.com
 
