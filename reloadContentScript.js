@@ -15,7 +15,7 @@
 */
 
 try {
-    Array.from(document.getElementsByClassName("Table__row_clickable_2VMNN"))
+    Array.from(document.querySelectorAll('tr[class*="Table__row_clickable"]'))
         .forEach(addStockAdvice);
 } catch(e) {
 }

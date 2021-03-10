@@ -46,30 +46,28 @@ document.head.insertAdjacentHTML("beforeend",
 
 let adviceLinks = {
     "yah": "https://finance.yahoo.com/quote/$tag/",
+    "foo": "https://www.fool.com/quote/$tag",
+    "cnn": "https://money.cnn.com/quote/quote.html?symb=$tag",
+    "tip": "https://www.tipranks.com/stocks/$tag/stock-analysis",
     "bar": "https://www.barrons.com/quote/stock/$tag",
     "inv": "https://research.investors.com/quote.aspx?symbol=$tag",
-    "tip": "https://www.tipranks.com/stocks/$tag/stock-analysis",
-    "cnn": "https://money.cnn.com/quote/quote.html?symb=$tag",
     "maw": "https://www.marketwatch.com/investing/stock/$tag",
     "bui": "https://markets.businessinsider.com/stocks/$tag-stock",
 };
 
 let addStockAdvice = (e) => {
     if (!e.hasAttribute("hasStockAdvice")) {
-        let stockTag = e.getElementsByClassName("Caption__subcaption_39Lm3")[0].textContent;
+        let stockTag = e.querySelectorAll('div[class^="Caption__subcaption"]')[0].textContent;
         
         let isPersonalPage = window.location.href.indexOf('https://www.tinkoff.ru/invest/broker_account/') === 0;
-        
-        let stockName = isPersonalPage
-            ? e.getElementsByClassName("PortfolioTablePure__subcaptionTicker_dE3m0")[0]
-            : e.getElementsByClassName("SecurityColumn__nameWrapper_3gZum")[0];
 
-        let eChild = e.getElementsByClassName("Table__cell_3dA6T")[isPersonalPage ? 3 : 2];
+        let lastElementOfRow = e.querySelectorAll('td[class^="Table__cell"]')[isPersonalPage ? 3 : 2];
+        lastElementOfRow.style.position = "relative";
 
         e.addEventListener("mouseenter", function(event) {
             let container = document.createElement("div");
             container.setAttribute("class", "stock-analytics-container");
-            eChild.appendChild(container);
+            lastElementOfRow.appendChild(container);
             
             let taggedAdviceLinks = createMapOfTaggedLinks(stockTag);
             
@@ -78,7 +76,7 @@ let addStockAdvice = (e) => {
         });
 
         e.addEventListener("mouseleave", function(event) {
-            let container = eChild.getElementsByClassName("stock-analytics-container")[0];
+            let container = lastElementOfRow.getElementsByClassName("stock-analytics-container")[0];
             if (container !== undefined) {
                 container.parentNode.removeChild(container);
             }
@@ -123,5 +121,9 @@ function addLinkToAllAdvices(container, taggedAdviceLinks) {
     });
 }
 
-Array.from(document.getElementsByClassName("Table__row_clickable_2VMNN"))
-    .forEach(addStockAdvice);
+function addStockAdviceInWindow() {
+    Array.from(document.querySelectorAll('tr[class*="Table__row_clickable"]'))
+        .forEach(addStockAdvice);
+}
+
+addStockAdviceInWindow();
