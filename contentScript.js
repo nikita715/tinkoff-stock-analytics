@@ -58,7 +58,7 @@ let adviceLinks = {
 let addStockAdvice = (e) => {
     if (!e.hasAttribute("hasStockAdvice")) {
         let stockTag = e.querySelectorAll('div[class^="Caption__subcaption"]')[0].textContent;
-        
+
         let isPersonalPage = window.location.href.indexOf('https://www.tinkoff.ru/invest/broker_account/') === 0;
 
         let lastElementOfRow = e.querySelectorAll('td[class^="Table__cell"]')[isPersonalPage ? 3 : 2];
@@ -68,9 +68,9 @@ let addStockAdvice = (e) => {
             let container = document.createElement("div");
             container.setAttribute("class", "stock-analytics-container");
             lastElementOfRow.appendChild(container);
-            
+
             let taggedAdviceLinks = createMapOfTaggedLinks(stockTag);
-            
+
             addLinkToAdvice(container, taggedAdviceLinks);
             addLinkToAllAdvices(container, taggedAdviceLinks);
         });
