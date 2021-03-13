@@ -15,7 +15,6 @@
 */
 
 try {
-    Array.from(document.querySelectorAll('tr[class*="Table__row_clickable"]'))
-        .forEach(addStockAdvice);
+    addStockAdviceInWindow();
 } catch(e) {
 }
