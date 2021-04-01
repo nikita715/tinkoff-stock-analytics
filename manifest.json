@@ -10,9 +10,7 @@
   },
   "content_scripts": [{
     "matches": [
-        "https://www.tinkoff.ru/invest/stocks*",
-        "https://www.tinkoff.ru/invest/favorites*",
-        "https://www.tinkoff.ru/invest/broker_account*"
+        "https://www.tinkoff.ru/invest/*"
     ],
     "js": ["contentScript.js"]
   }],

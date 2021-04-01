@@ -14,6 +14,12 @@
    limitations under the License.
 */
 
-chrome.browserAction.onClicked.addListener(function(tab) {
-    chrome.tabs.executeScript(tab.id, {file: "reloadContentScript.js"});
+//chrome.browserAction.onClicked.addListener(function(tab) {
+//    chrome.tabs.executeScript(tab.id, {file: "reloadContentScript.js"});
+//});
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    if (changeInfo.url) {
+        chrome.tabs.executeScript(tab.id, {file: "reloadContentScript.js"});
+    }
 });

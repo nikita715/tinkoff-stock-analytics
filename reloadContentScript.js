@@ -17,4 +17,5 @@
 try {
     addStockAdviceInWindow();
 } catch(e) {
+    console.log(e);
 }
