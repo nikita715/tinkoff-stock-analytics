@@ -17,9 +17,11 @@
   "permissions": [
     "https://www.tinkoff.ru/invest/stocks/",
     "https://www.tinkoff.ru/invest/favorites/",
-    "https://www.tinkoff.ru/invest/broker_account/"
+    "https://www.tinkoff.ru/invest/broker_account/",
+    "storage"
   ],
   "browser_action": {
+    "default_popup": "popup/popup.html",
     "default_title": "Stock Analytics"
   },
   "icons": {
