@@ -125,7 +125,7 @@ function addStockAdviceForStock() {
 
         addLinkToAdvice(container, taggedAdviceLinks);
         addLinkToAllAdvices(container, taggedAdviceLinks);
-        
+
         document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
     }
 }
@@ -166,15 +166,18 @@ function addLinkToAllAdvices(container, taggedAdviceLinks) {
 }
 
 let stockPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/stocks/.+/.*');
-let stockListPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/(favorites|broker_account|stocks)/.*');
+let stockListPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/(favorites|broker_account|stocks)(/|\\?).*');
 
 function addStockAdviceInWindow() {
+  console.log('try0');
     if (stockPageUrlRegexp.test(window.location.href)) {
+      console.log('try1');
         let tickets = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]');
         if (tickets.length === 0 || !tickets[0].hasAttribute("hasStockAdvice")) {
             addStockAdviceForStock();
         }
     } else if (stockListPageUrlRegexp.test(window.location.href)) {
+      console.log('try2');
         let ticketCount = Number(new URLSearchParams(window.location.href).get('end'));
         let tickets = document.querySelectorAll('tr[class*="Table__row_clickable"]');
         if (tickets.length == 0 || ticketCount != 0 && ticketCount != tickets.length) {
