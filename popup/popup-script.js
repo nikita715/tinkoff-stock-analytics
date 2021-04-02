@@ -15,9 +15,34 @@
 */
 
 document.addEventListener('DOMContentLoaded', function() {
-  
-chrome.storage.sync.set({
-  "translator_holdAltToTranslate": false
-});
+
+  let defaultAdviceLinks = {
+      "yah": "https://finance.yahoo.com/quote/$tag/",
+      "foo": "https://www.fool.com/quote/$tag",
+      "cnn": "https://money.cnn.com/quote/quote.html?symb=$tag",
+      "tip": "https://www.tipranks.com/stocks/$tag/stock-analysis",
+      "bar": "https://www.barrons.com/quote/stock/$tag",
+      "inv": "https://research.investors.com/quote.aspx?symbol=$tag",
+      "maw": "https://www.marketwatch.com/investing/stock/$tag",
+      "bui": "https://markets.businessinsider.com/stocks/$tag-stock",
+  };
+
+  chrome.storage.sync.get(['advice_link_templates'], function(items) {
+    document.getElementById("advice_link_templates").value = items['advice_link_templates'];
+  });
+
+  document.getElementById("save_advice_link_templates").addEventListener('click', function(e) {
+    chrome.storage.sync.set({
+      "advice_link_templates": document.getElementById("advice_link_templates").value
+    });
+  });
+
+  document.getElementById("reset_advice_link_templates").addEventListener('click', function(e) {
+    let defaultLinksJson = JSON.stringify(defaultAdviceLinks);
+    chrome.storage.sync.set({
+      "advice_link_templates": defaultLinksJson
+    });
+    document.getElementById("advice_link_templates").value = defaultLinksJson;
+  });
 
 });

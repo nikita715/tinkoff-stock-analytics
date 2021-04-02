@@ -62,7 +62,7 @@ document.head.insertAdjacentHTML("beforeend",
     }
 </style>`);
 
-let adviceLinks = {
+let defaultAdviceLinks = {
     "yah": "https://finance.yahoo.com/quote/$tag/",
     "foo": "https://www.fool.com/quote/$tag",
     "cnn": "https://money.cnn.com/quote/quote.html?symb=$tag",
@@ -72,6 +72,8 @@ let adviceLinks = {
     "maw": "https://www.marketwatch.com/investing/stock/$tag",
     "bui": "https://markets.businessinsider.com/stocks/$tag-stock",
 };
+
+var adviceLinks;
 
 let addStockAdvice = (e) => {
     if (!e.hasAttribute("hasStockAdvice")) {
@@ -169,15 +171,22 @@ let stockPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/stocks/.+/.
 let stockListPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/(favorites|broker_account|stocks)(/|\\?).*');
 
 function addStockAdviceInWindow() {
-  console.log('try0');
+  chrome.storage.sync.get(['advice_link_templates'], function(items) {
+    try {
+      adviceLinks = JSON.parse(items['advice_link_templates']);
+    } catch(e) {
+        console.log(e);
+        chrome.storage.sync.set({
+          "advice_link_templates": JSON.stringify(stockTag)
+        });
+    }
+
     if (stockPageUrlRegexp.test(window.location.href)) {
-      console.log('try1');
         let tickets = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]');
         if (tickets.length === 0 || !tickets[0].hasAttribute("hasStockAdvice")) {
             addStockAdviceForStock();
         }
     } else if (stockListPageUrlRegexp.test(window.location.href)) {
-      console.log('try2');
         let ticketCount = Number(new URLSearchParams(window.location.href).get('end'));
         let tickets = document.querySelectorAll('tr[class*="Table__row_clickable"]');
         if (tickets.length == 0 || ticketCount != 0 && ticketCount != tickets.length) {
@@ -186,10 +195,7 @@ function addStockAdviceInWindow() {
             Array.from(tickets).forEach(addStockAdvice);
         }
     }
+  });
 }
-
-chrome.storage.sync.get(['foo', 'bar'], function(items) {
-  console.log('Settings retrieved', items);
-});
 
 addStockAdviceInWindow();
