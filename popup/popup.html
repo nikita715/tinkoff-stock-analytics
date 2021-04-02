@@ -23,26 +23,37 @@
 </head>
 
 <body>
-  <textarea id="advice_link_templates" rows="8" cols="80"></textarea>
-  <div class="col-auto">
-    <button id="save_advice_link_templates" type="submit" class="btn btn-primary">Submit</button>
-    <button id="reset_advice_link_templates" type="submit" class="btn btn-secondary ml-2">Reset</button>
-  </div>
-  <!-- <form class="stock-advice-popup m-3">
-  <div class="form-row align-items-center">
-    <div class="col-auto">
-      <label class="sr-only" for="inlineFormInput">Name</label>
-      <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Tag">
+  <!--<textarea id="advice_link_templates" rows="8" cols="80"></textarea>
+    -->
+  <form class="stock-advice-popup m-3">
+    <template class="advice_template">
+      <div class="form-row flex-nowrap tinkoff-advice-element">
+        <div class="form-group col-2">
+          <label class="sr-only" for="inlineFormInput">Name</label>
+          <input type="text" class="form-control" id="inlineFormInput" placeholder="Tag">
+        </div>
+        <div class="form-group col">
+          <label class="sr-only" for="inlineFormInput">Name</label>
+          <input type="text" class="form-control" id="inlineFormInput" placeholder="URL">
+        </div>
+        <div class="col-auto">
+          <a class="btn btn-danger mb-2 delete_advice_link text-white">&#9003</a>
+        </div>
+      </div>
+    </template>
+    <div class="advice_container">
     </div>
-    <div class="col-auto">
-      <label class="sr-only" for="inlineFormInput">Name</label>
-      <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="URL">
-    </div>
+  <div class="d-grid gap-2 row col-md-5">
+   <a id="save_advice_link_templates" class="btn btn-primary text-white">Submit</a>
+   <a id="add_advice_link_template" class="btn btn-success ml-1 text-white">Add</a>
+   <a id="reset_advice_link_templates" class="btn btn-secondary ml-1 text-white">Reset</a>
+   <a id="copy_advice_link_templates" class="btn btn-secondary ml-1 text-white">Copy</a>
+   <a id="paste_advice_link_templates" class="btn btn-secondary ml-1 text-white">Paste</a>
+   <div class="col mt-1">
+     <input type="text" id="inputJson" class="col-8" placeholder="Json">
+   </div>
   </div>
-  <div class="col-auto">
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </div>
-</form> -->
+</form>
   <script src="popup-script.js" type="text/javascript"></script>
 </body>
 
