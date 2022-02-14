@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+let adviceWidth = (document.getElementsByTagName("header")[0].clientWidth - 1200) / 2 - 15;
+
 document.head.insertAdjacentHTML("beforeend",
 `<style>
     .stock-analytics-container {
@@ -21,7 +23,8 @@ document.head.insertAdjacentHTML("beforeend",
         left: 0;
         top: 0;
         margin-left: 100%;
-        width: 1000px;
+        width: ` + adviceWidth + `px;
+        overflow: hidden;
         padding: 22px 30px 100px;
         text-align: initial;
     }
@@ -92,10 +95,10 @@ let addStockAdvice = (e) => {
             container.setAttribute("class", "stock-analytics-container");
             lastElementOfRow.appendChild(container);
 
-            let taggedAdviceLinks = createMapOfTaggedLinks(stockTag);
-
-            addLinkToAdvice(container, taggedAdviceLinks, true);
-            addLinkToAllAdvices(container, taggedAdviceLinks);
+            createMapOfTaggedLinks(stockTag, function(taggedAdviceLinks) {
+              addLinkToAdvice(container, taggedAdviceLinks, true);
+              addLinkToAllAdvices(container, taggedAdviceLinks);
+            });
         });
 
         e.addEventListener("mouseleave", function(event) {
@@ -115,34 +118,38 @@ function addStockAdviceForStock() {
     } else {
         let stockTag = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].textContent;
 
-        let taggedAdviceLinks = createMapOfTaggedLinks(stockTag);
+        createMapOfTaggedLinks(stockTag, function(taggedAdviceLinks) {
+          let parent = document.querySelectorAll('div[class^="Column-module__column_"]')[1].children[0].children[1].children[1];
+          let container = document.createElement("div");
+          let container2 = document.createElement("span");
+          container2.textContent = "Ссылки";
+          container2.setAttribute("class", "stock-analytics-container__page__title");
+          let container3 = document.createElement("br");
+          container.appendChild(container2);
+          container.appendChild(container3);
+          container.setAttribute("class", "stock-analytics-container__page");
+          parent.parentNode.insertBefore(container, parent);
 
-        let parent = document.querySelectorAll('div[class^="Column-module__column_"]')[1].children[0].children[1].children[1];
-        let container = document.createElement("div");
-        let container2 = document.createElement("span");
-        container2.textContent = "Ссылки";
-        container2.setAttribute("class", "stock-analytics-container__page__title");
-        let container3 = document.createElement("br");
-        container.appendChild(container2);
-        container.appendChild(container3);
-        container.setAttribute("class", "stock-analytics-container__page");
-        parent.parentNode.insertBefore(container, parent);
+          addLinkToAdvice(container, taggedAdviceLinks, false);
+          addLinkToAllAdvices(container, taggedAdviceLinks);
 
-        addLinkToAdvice(container, taggedAdviceLinks, false);
-        addLinkToAllAdvices(container, taggedAdviceLinks);
-
-        document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
+          document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
+        });
     }
 }
 
-function createMapOfTaggedLinks(stockTag) {
-    return Object.keys(adviceLinks).map((name) => {
-        let taggedLink = adviceLinks[name].replace("$tag", stockTag);
+function createMapOfTaggedLinks(stockTag, callback) {
+  chrome.storage.sync.get("tinkoffAnalytics_adviceLinks", function(item) {
+    let userAdviceLinks = JSON.parse(item["tinkoffAnalytics_adviceLinks"]);
+    let taggedLinksMap = Object.keys(userAdviceLinks).map((name) => {
+        let taggedLink = userAdviceLinks[name].replace("$tag", stockTag);
         return {key: name, val: taggedLink};
     }).reduce(function(map, obj) {
         map[obj.key] = obj.val;
         return map;
-    }, {});;
+    }, {});
+    callback(taggedLinksMap);
+  });
 }
 
 function addLinkToAdvice(container, taggedAdviceLinks, wrapped) {
@@ -175,7 +182,20 @@ function addLinkToAllAdvices(container, taggedAdviceLinks) {
 
 let stockPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/stocks/.+/');
 
+function setUserAdviceLinksIfNull() {
+    chrome.storage.sync.get("tinkoffAnalytics_adviceLinks", function(item) {
+      let userAdviceLinks = item["tinkoffAnalytics_adviceLinks"];
+      if (userAdviceLinks === undefined) {
+        let userAdviceLinks = JSON.stringify(adviceLinks, null, 2);
+        chrome.storage.sync.set({
+          "tinkoffAnalytics_adviceLinks": userAdviceLinks
+        });
+      }
+    });
+}
+
 function addStockAdviceInWindow() {
+    setUserAdviceLinksIfNull();
     if (stockPageUrlRegexp.test(window.location.href)) {
         if (!document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].hasAttribute("hasStockAdvice")) {
             addStockAdviceForStock();
