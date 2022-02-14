@@ -14,6 +14,8 @@
    limitations under the License.
 */
 
+let adviceWidth = (document.getElementsByTagName("header")[0].clientWidth - 1200) / 2 - 15;
+
 document.head.insertAdjacentHTML("beforeend",
 `<style>
     .stock-analytics-container {
@@ -21,7 +23,8 @@ document.head.insertAdjacentHTML("beforeend",
         left: 0;
         top: 0;
         margin-left: 100%;
-        width: 1000px;
+        width: ` + adviceWidth + `px;
+        overflow: hidden;
         padding: 22px 30px 100px;
         text-align: initial;
     }
@@ -137,9 +140,9 @@ function addStockAdviceForStock() {
 
 function createMapOfTaggedLinks(stockTag, callback) {
   chrome.storage.sync.get("tinkoffAnalytics_adviceLinks", function(item) {
-    let adviceLinks = item["translator_translateInputAction"];
-    let taggedLinksMap = Object.keys(adviceLinks).map((name) => {
-        let taggedLink = adviceLinks[name].replace("$tag", stockTag);
+    let userAdviceLinks = JSON.parse(item["tinkoffAnalytics_adviceLinks"]);
+    let taggedLinksMap = Object.keys(userAdviceLinks).map((name) => {
+        let taggedLink = userAdviceLinks[name].replace("$tag", stockTag);
         return {key: name, val: taggedLink};
     }).reduce(function(map, obj) {
         map[obj.key] = obj.val;
@@ -179,7 +182,20 @@ function addLinkToAllAdvices(container, taggedAdviceLinks) {
 
 let stockPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/stocks/.+/');
 
+function setUserAdviceLinksIfNull() {
+    chrome.storage.sync.get("tinkoffAnalytics_adviceLinks", function(item) {
+      let userAdviceLinks = item["tinkoffAnalytics_adviceLinks"];
+      if (userAdviceLinks === undefined) {
+        let userAdviceLinks = JSON.stringify(adviceLinks, null, 2);
+        chrome.storage.sync.set({
+          "tinkoffAnalytics_adviceLinks": userAdviceLinks
+        });
+      }
+    });
+}
+
 function addStockAdviceInWindow() {
+    setUserAdviceLinksIfNull();
     if (stockPageUrlRegexp.test(window.location.href)) {
         if (!document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].hasAttribute("hasStockAdvice")) {
             addStockAdviceForStock();
