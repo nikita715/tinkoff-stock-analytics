@@ -92,10 +92,10 @@ let addStockAdvice = (e) => {
             container.setAttribute("class", "stock-analytics-container");
             lastElementOfRow.appendChild(container);
 
-            let taggedAdviceLinks = createMapOfTaggedLinks(stockTag);
-
-            addLinkToAdvice(container, taggedAdviceLinks, true);
-            addLinkToAllAdvices(container, taggedAdviceLinks);
+            createMapOfTaggedLinks(stockTag, function(taggedAdviceLinks) {
+              addLinkToAdvice(container, taggedAdviceLinks, true);
+              addLinkToAllAdvices(container, taggedAdviceLinks);
+            });
         });
 
         e.addEventListener("mouseleave", function(event) {
@@ -115,34 +115,38 @@ function addStockAdviceForStock() {
     } else {
         let stockTag = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].textContent;
 
-        let taggedAdviceLinks = createMapOfTaggedLinks(stockTag);
+        createMapOfTaggedLinks(stockTag, function(taggedAdviceLinks) {
+          let parent = document.querySelectorAll('div[class^="Column-module__column_"]')[1].children[0].children[1].children[1];
+          let container = document.createElement("div");
+          let container2 = document.createElement("span");
+          container2.textContent = "Ссылки";
+          container2.setAttribute("class", "stock-analytics-container__page__title");
+          let container3 = document.createElement("br");
+          container.appendChild(container2);
+          container.appendChild(container3);
+          container.setAttribute("class", "stock-analytics-container__page");
+          parent.parentNode.insertBefore(container, parent);
 
-        let parent = document.querySelectorAll('div[class^="Column-module__column_"]')[1].children[0].children[1].children[1];
-        let container = document.createElement("div");
-        let container2 = document.createElement("span");
-        container2.textContent = "Ссылки";
-        container2.setAttribute("class", "stock-analytics-container__page__title");
-        let container3 = document.createElement("br");
-        container.appendChild(container2);
-        container.appendChild(container3);
-        container.setAttribute("class", "stock-analytics-container__page");
-        parent.parentNode.insertBefore(container, parent);
+          addLinkToAdvice(container, taggedAdviceLinks, false);
+          addLinkToAllAdvices(container, taggedAdviceLinks);
 
-        addLinkToAdvice(container, taggedAdviceLinks, false);
-        addLinkToAllAdvices(container, taggedAdviceLinks);
-
-        document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
+          document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
+        });
     }
 }
 
-function createMapOfTaggedLinks(stockTag) {
-    return Object.keys(adviceLinks).map((name) => {
+function createMapOfTaggedLinks(stockTag, callback) {
+  chrome.storage.sync.get("tinkoffAnalytics_adviceLinks", function(item) {
+    let adviceLinks = item["translator_translateInputAction"];
+    let taggedLinksMap = Object.keys(adviceLinks).map((name) => {
         let taggedLink = adviceLinks[name].replace("$tag", stockTag);
         return {key: name, val: taggedLink};
     }).reduce(function(map, obj) {
         map[obj.key] = obj.val;
         return map;
-    }, {});;
+    }, {});
+    callback(taggedLinksMap);
+  });
 }
 
 function addLinkToAdvice(container, taggedAdviceLinks, wrapped) {

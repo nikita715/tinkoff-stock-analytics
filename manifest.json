@@ -29,5 +29,6 @@
   "icons": {
     "32": "icons/icon-32.png",
     "16": "icons/icon-16.png"
-  }
+  },
+  "options_page": "options.html"
 }
