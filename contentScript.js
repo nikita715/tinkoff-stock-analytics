@@ -18,30 +18,29 @@ document.head.insertAdjacentHTML("beforeend",
 `<style>
     .stock-analytics-container {
         position: absolute;
-        display: flex;
         left: 0;
         top: 0;
-        height: 100%;
         margin-left: 100%;
-        padding: 22px;
+        width: 1000px;
+        padding: 22px 30px 100px;
+        text-align: initial;
     }
     .stock-analytics-link {
         width: 20px;
         height: 20px;
         background-color: aquamarine;
-        margin: 5px 0 5px 5px;
+        margin: 5px 0 5px 50px;
     }
     .stock-analytics-container-in {
         height: 20px;
         margin: 5px 0 5px 5px;
         z-index: 10000;
+        white-space: nowrap;
     }
     .stock-analytics-container-in:last-child {
         margin-right: 5px;
         cursor: pointer;
-    }
-    .stock-analytics-container-in:first-of-type {
-        margin-left: 0px;
+        color: #2200CC;
     }
     .stock-analytics-container__page {
         margin-top: 12px;
@@ -63,6 +62,8 @@ document.head.insertAdjacentHTML("beforeend",
 </style>`);
 
 let adviceLinks = {
+    "fin": "https://finviz.com/screener.ashx?v=121&t=$tag",
+    "gur": "https://www.gurufocus.com/stock/$tag/summary",
     "yah": "https://finance.yahoo.com/quote/$tag/",
     "foo": "https://www.fool.com/quote/$tag",
     "cnn": "https://money.cnn.com/quote/quote.html?symb=$tag",
@@ -75,11 +76,15 @@ let adviceLinks = {
 
 let addStockAdvice = (e) => {
     if (!e.hasAttribute("hasStockAdvice")) {
-        let stockTag = e.querySelectorAll('div[class^="Caption__subcaption"]')[0].textContent;
+        var stockTagBlock = e.querySelectorAll('div[class^="Caption__subcaption"]')[0];
+        if (stockTagBlock === undefined) {
+          stockTagBlock = e.querySelectorAll('div[class^="PortfolioTable__infoItem"]')[0];
+        }
+        let stockTag = stockTagBlock.textContent;
 
-        let isPersonalPage = window.location.href.indexOf('https://www.tinkoff.ru/invest/broker_account/') === 0;
+        let isPersonalPage = window.location.href.indexOf('https://www.tinkoff.ru/invest/portfolio/') === 0;
 
-        let lastElementOfRow = e.querySelectorAll('td[class^="Table__cell"]')[isPersonalPage ? 3 : 2];
+        let lastElementOfRow = e.querySelectorAll('td[class^="Table-module__cell"]')[isPersonalPage ? 3 : 2];
         lastElementOfRow.style.position = "relative";
 
         e.addEventListener("mouseenter", function(event) {
@@ -89,7 +94,7 @@ let addStockAdvice = (e) => {
 
             let taggedAdviceLinks = createMapOfTaggedLinks(stockTag);
 
-            addLinkToAdvice(container, taggedAdviceLinks);
+            addLinkToAdvice(container, taggedAdviceLinks, true);
             addLinkToAllAdvices(container, taggedAdviceLinks);
         });
 
@@ -105,9 +110,8 @@ let addStockAdvice = (e) => {
 };
 
 function addStockAdviceForStock() {
-    if (document.querySelectorAll('span[class^="FavoritesLabelPure__label_"]').length === 0) {
+    if (document.querySelectorAll('div[class^="SecurityPriceDetails__favorites"]').length === 0) {
         window.setTimeout(addStockAdviceForStock, 1000);
-        console.log(false)
     } else {
         let stockTag = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].textContent;
 
@@ -124,9 +128,9 @@ function addStockAdviceForStock() {
         container.setAttribute("class", "stock-analytics-container__page");
         parent.parentNode.insertBefore(container, parent);
 
-        addLinkToAdvice(container, taggedAdviceLinks);
+        addLinkToAdvice(container, taggedAdviceLinks, false);
         addLinkToAllAdvices(container, taggedAdviceLinks);
-        
+
         document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
     }
 }
@@ -141,7 +145,7 @@ function createMapOfTaggedLinks(stockTag) {
     }, {});;
 }
 
-function addLinkToAdvice(container, taggedAdviceLinks) {
+function addLinkToAdvice(container, taggedAdviceLinks, wrapped) {
     Object.keys(taggedAdviceLinks).forEach((name) => {
         let taggedLink = taggedAdviceLinks[name];
         let linkElement = document.createElement("a");
@@ -150,6 +154,9 @@ function addLinkToAdvice(container, taggedAdviceLinks) {
         linkElement.setAttribute("target", "_blank");
         linkElement.innerHTML = name;
         container.appendChild(linkElement);
+        if (wrapped) {
+          container.appendChild(document.createElement("br"));
+        }
     });
 }
 
@@ -174,7 +181,7 @@ function addStockAdviceInWindow() {
             addStockAdviceForStock();
         }
     } else {
-        Array.from(document.querySelectorAll('tr[class*="Table__row_clickable"]'))
+        Array.from(document.querySelectorAll('tr[class*="Table-module__row_clickable"]'))
             .forEach(addStockAdvice);
     }
 }

@@ -12,14 +12,16 @@
     "matches": [
         "https://www.tinkoff.ru/invest/stocks*",
         "https://www.tinkoff.ru/invest/favorites*",
-        "https://www.tinkoff.ru/invest/broker_account*"
+        "https://www.tinkoff.ru/invest/broker_account*",
+        "https://www.tinkoff.ru/invest/portfolio/*"
     ],
     "js": ["contentScript.js"]
   }],
   "permissions": [
     "https://www.tinkoff.ru/invest/stocks/",
     "https://www.tinkoff.ru/invest/favorites/",
-    "https://www.tinkoff.ru/invest/broker_account/"
+    "https://www.tinkoff.ru/invest/broker_account/",
+    "https://www.tinkoff.ru/invest/portfolio/"
   ],
   "browser_action": {
     "default_title": "Stock Analytics"
