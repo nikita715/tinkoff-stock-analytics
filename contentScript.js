@@ -14,31 +14,46 @@
    limitations under the License.
 */
 
-let adviceWidth = (document.getElementsByTagName("header")[0].clientWidth - 1200) / 2 - 15;
+let adviceWidth = (document.getElementsByTagName("header")[0].clientWidth - 1200) / 2 + 40;
 
 document.head.insertAdjacentHTML("beforeend",
 `<style>
     .stock-analytics-container {
         position: absolute;
         left: 0;
-        top: 0;
+        top: -1px;
         margin-left: 100%;
         width: ` + adviceWidth + `px;
         overflow: hidden;
-        padding: 22px 30px 100px;
+        opacity: .3;
+    }
+    .stock-analytics-container:hover {
+        opacity: 1;
+    }
+    .stock-analytics-container-wrapper {
+        margin-left: 20px;
+        margin-right: 20px;
+        padding: 30px 40px 30px 20px;
         text-align: initial;
+        font-size: 15px;
+        border: 1px solid #f2f2f2;
+        border-radius: 6px;
+        overflow: hidden;
+        display: inline-block;
+        float: left;
     }
     .stock-analytics-link {
         width: 20px;
         height: 20px;
         background-color: aquamarine;
         margin: 5px 0 5px 50px;
+        width: 100%;
     }
     .stock-analytics-container-in {
         height: 20px;
-        margin: 5px 0 5px 5px;
+        margin: 5px 0 5px;
         z-index: 10000;
-        white-space: nowrap;
+        width: 100%;
     }
     .stock-analytics-container-in:last-child {
         margin-right: 5px;
@@ -51,6 +66,7 @@ document.head.insertAdjacentHTML("beforeend",
         font-size: 15px;
         border: 1px solid #e7e8ea;
         border-radius: 6px;
+        line-height: 25px;
     }
     .stock-analytics-container__page__title {
         word-wrap: break-word;
@@ -61,6 +77,13 @@ document.head.insertAdjacentHTML("beforeend",
         letter-spacing: 0;
         color: rgba(0,0,0,.54);
         margin-bottom: 7px;
+    }
+    .stock-analytics-container-in__page {
+        margin-right: 5px;
+        display: inline-block;
+        width: auto;
+        height: auto;
+        line-height: 10px;
     }
 </style>`);
 
@@ -94,10 +117,13 @@ let addStockAdvice = (e) => {
             let container = document.createElement("div");
             container.setAttribute("class", "stock-analytics-container");
             lastElementOfRow.appendChild(container);
+            let containerWrapper = document.createElement("div");
+            containerWrapper.setAttribute("class", "stock-analytics-container-wrapper");
+            container.appendChild(containerWrapper);
 
             createMapOfTaggedLinks(stockTag, function(taggedAdviceLinks) {
-              addLinkToAdvice(container, taggedAdviceLinks, true);
-              addLinkToAllAdvices(container, taggedAdviceLinks);
+              addLinkToAdvice(containerWrapper, taggedAdviceLinks, false);
+              addLinkToAllAdvices(containerWrapper, taggedAdviceLinks);
             });
         });
 
@@ -130,7 +156,7 @@ function addStockAdviceForStock() {
           container.setAttribute("class", "stock-analytics-container__page");
           parent.parentNode.insertBefore(container, parent);
 
-          addLinkToAdvice(container, taggedAdviceLinks, false);
+          addLinkToAdvice(container, taggedAdviceLinks, true);
           addLinkToAllAdvices(container, taggedAdviceLinks);
 
           document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
@@ -152,7 +178,7 @@ function createMapOfTaggedLinks(stockTag, callback) {
   });
 }
 
-function addLinkToAdvice(container, taggedAdviceLinks, wrapped) {
+function addLinkToAdvice(container, taggedAdviceLinks, stockPage) {
     Object.keys(taggedAdviceLinks).forEach((name) => {
         let taggedLink = taggedAdviceLinks[name];
         let linkElement = document.createElement("a");
@@ -161,7 +187,9 @@ function addLinkToAdvice(container, taggedAdviceLinks, wrapped) {
         linkElement.setAttribute("target", "_blank");
         linkElement.innerHTML = name;
         container.appendChild(linkElement);
-        if (wrapped) {
+        if (stockPage) {
+          linkElement.setAttribute("class", "stock-analytics-container-in stock-analytics-container-in__page");
+        } else {
           container.appendChild(document.createElement("br"));
         }
     });
@@ -170,7 +198,7 @@ function addLinkToAdvice(container, taggedAdviceLinks, wrapped) {
 function addLinkToAllAdvices(container, taggedAdviceLinks) {
     let linkElement = document.createElement("a");
     linkElement.setAttribute("class", "stock-analytics-container-in");
-    linkElement.innerHTML = "all";
+    linkElement.innerHTML = "All";
     container.appendChild(linkElement);
 
     linkElement.addEventListener("click", function(event) {
