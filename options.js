@@ -3,16 +3,16 @@ let resetElement = document.getElementById("resetAdviceLinks");
 let textareaElement = document.getElementById("adviceLinksArea");
 
 let adviceLinks = {
-    "fin": "https://finviz.com/screener.ashx?v=121&t=$tag",
-    "gur": "https://www.gurufocus.com/stock/$tag/summary",
-    "yah": "https://finance.yahoo.com/quote/$tag/",
-    "foo": "https://www.fool.com/quote/$tag",
-    "cnn": "https://money.cnn.com/quote/quote.html?symb=$tag",
-    "tip": "https://www.tipranks.com/stocks/$tag/stock-analysis",
-    "bar": "https://www.barrons.com/quote/stock/$tag",
-    "inv": "https://research.investors.com/quote.aspx?symbol=$tag",
-    "maw": "https://www.marketwatch.com/investing/stock/$tag",
-    "bui": "https://markets.businessinsider.com/stocks/$tag-stock",
+    "Yahoo": "https://finance.yahoo.com/quote/$tag/",
+    "GuruFocus": "https://www.gurufocus.com/stock/$tag/summary",
+    "FinViz": "https://finviz.com/screener.ashx?v=121&t=$tag",
+    "Fool": "https://www.fool.com/quote/$tag",
+    "CNN": "https://money.cnn.com/quote/quote.html?symb=$tag",
+    "TipRanks": "https://www.tipranks.com/stocks/$tag/stock-analysis",
+    "Barrons": "https://www.barrons.com/quote/stock/$tag",
+    "IBD": "https://research.investors.com/quote.aspx?symbol=$tag",
+    "MarketWatch": "https://www.marketwatch.com/investing/stock/$tag",
+    "BusinessInsider": "https://markets.businessinsider.com/stocks/$tag-stock",
 };
 
 chrome.storage.sync.get("tinkoffAnalytics_adviceLinks", function(item) {
