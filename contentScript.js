@@ -41,6 +41,8 @@ document.head.insertAdjacentHTML("beforeend",
         overflow: hidden;
         display: inline-block;
         float: left;
+        z-index: 10000;
+        background-color: white;
     }
     .stock-analytics-link {
         width: 20px;
@@ -101,16 +103,15 @@ let adviceLinks = {
 };
 
 let addStockAdvice = (e) => {
-    if (!e.hasAttribute("hasStockAdvice")) {
+    if (!e.hasAttribute("hasStockAdvice") && e.querySelectorAll('a[class*="Link-module__link"]')[0].href.includes("/stocks/")) {
         var stockTagBlock = e.querySelectorAll('div[class^="Caption__subcaption"]')[0];
         if (stockTagBlock === undefined) {
           stockTagBlock = e.querySelectorAll('div[class^="PortfolioTable__infoItem"]')[0];
         }
         let stockTag = stockTagBlock.textContent;
 
-        let isPersonalPage = window.location.href.indexOf('https://www.tinkoff.ru/invest/portfolio/') === 0;
-
-        let lastElementOfRow = e.querySelectorAll('td[class^="Table-module__cell"]')[isPersonalPage ? 3 : 2];
+        let cellElements = e.querySelectorAll('td[class^="Table-module__cell"]');
+        let lastElementOfRow = cellElements[cellElements.length - 1];
         lastElementOfRow.style.position = "relative";
 
         e.addEventListener("mouseenter", function(event) {
@@ -208,7 +209,8 @@ function addLinkToAllAdvices(container, taggedAdviceLinks) {
     });
 }
 
-let stockPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/stocks/.+/');
+let stockPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/stocks/.+/.*');
+let stockListPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/(favorites|broker_account|stocks|portfolio)/.*');
 
 function setUserAdviceLinksIfNull() {
     chrome.storage.sync.get("tinkoffAnalytics_adviceLinks", function(item) {
@@ -225,12 +227,18 @@ function setUserAdviceLinksIfNull() {
 function addStockAdviceInWindow() {
     setUserAdviceLinksIfNull();
     if (stockPageUrlRegexp.test(window.location.href)) {
-        if (!document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].hasAttribute("hasStockAdvice")) {
-            addStockAdviceForStock();
-        }
-    } else {
-        Array.from(document.querySelectorAll('tr[class*="Table-module__row_clickable"]'))
-            .forEach(addStockAdvice);
+      let tickets = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]');
+      if (tickets.length === 0 || !tickets[0].hasAttribute("hasStockAdvice")) {
+          addStockAdviceForStock();
+      }
+    } else if (stockListPageUrlRegexp.test(window.location.href)) {
+      let ticketCount = Number(new URLSearchParams(window.location.href).get('end'));
+      let tickets = document.querySelectorAll('tr[class*="Table-module__row_clickable"]');
+      if (tickets.length == 0 || ticketCount != 0 && ticketCount != tickets.length) {
+          window.setTimeout(addStockAdviceInWindow, 200);
+      } else {
+          Array.from(tickets).forEach(addStockAdvice);
+      }
     }
 }
 
