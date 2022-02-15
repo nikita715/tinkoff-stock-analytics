@@ -22,5 +22,8 @@
 - Markets Insider
 
 ## Скриншоты
+### Страница акции
 <img src="https://github.com/nikita715/tinkoff-stock-analytics-extension/blob/master/images/screenshot-stock-page.jpg" alt="drawing" width="600"/>
+
+### Страница каталога
 <img src="https://github.com/nikita715/tinkoff-stock-analytics-extension/blob/master/images/screenshot-catalog.jpg" alt="drawing" width="600"/>
