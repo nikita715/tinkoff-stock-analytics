@@ -7,7 +7,9 @@
 
 Данное расширение добавляет ссылки к спискам акций на страницах персонального портфеля, каталога и избранных акций, а также на странице акции. Если ссылки отсутствуют, то для их появления нужно нажать на иконку расширения.
 
-Поддерживаемые сайты:
+Набор ссылок можно изменить на странице настроек расширения. Ссылки формируются при помощи замены шаблона $tag на тикер акции.
+
+Предустановлены ссылки на данные сайты:
 - Finviz
 - GuruFocus
 - Yahoo Finance
@@ -19,4 +21,6 @@
 - MarketWatch
 - Markets Insider
 
-![screenshot](https://github.com/nikita715/tinkoff-stock-analytics-extension/blob/master/images/screenshot.jpg)
+## Скриншоты
+<img src="https://github.com/nikita715/tinkoff-stock-analytics-extension/blob/master/images/screenshot-stock-page.jpg" alt="drawing" width="600"/>
+<img src="https://github.com/nikita715/tinkoff-stock-analytics-extension/blob/master/images/screenshot-catalog.jpg" alt="drawing" width="600"/>
