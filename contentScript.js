@@ -155,12 +155,15 @@ function addStockAdviceForStock() {
           container.appendChild(container2);
           container.appendChild(container3);
           container.setAttribute("class", "stock-analytics-container__page");
-          parent.parentNode.insertBefore(container, parent);
 
-          addLinkToAdvice(container, taggedAdviceLinks, true);
-          addLinkToAllAdvices(container, taggedAdviceLinks);
+          if (parent.parentNode.querySelectorAll('div[class*="stock-analytics-container"]').length === 0) {
+            parent.parentNode.insertBefore(container, parent);
 
-          document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
+            addLinkToAdvice(container, taggedAdviceLinks, true);
+            addLinkToAllAdvices(container, taggedAdviceLinks);
+
+            document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
+          }
         });
     }
 }
@@ -209,8 +212,8 @@ function addLinkToAllAdvices(container, taggedAdviceLinks) {
     });
 }
 
-let stockPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/stocks/.+/.*');
-let stockListPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/(favorites|broker_account|stocks|portfolio)/.*');
+let stockPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/stocks/.+/.*(?<!buy/)$');
+let stockListPageUrlRegexp = new RegExp('https://www\.tinkoff\.ru/invest/(favorites|broker_account|stocks|portfolio)/.*(?<!buy/)$');
 
 function setUserAdviceLinksIfNull() {
     chrome.storage.sync.get("tinkoffAnalytics_adviceLinks", function(item) {
@@ -225,21 +228,21 @@ function setUserAdviceLinksIfNull() {
 }
 
 function addStockAdviceInWindow() {
-    setUserAdviceLinksIfNull();
-    if (stockPageUrlRegexp.test(window.location.href)) {
-      let tickets = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]');
-      if (tickets.length === 0 || !tickets[0].hasAttribute("hasStockAdvice")) {
-          addStockAdviceForStock();
+      setUserAdviceLinksIfNull();
+      if (stockPageUrlRegexp.test(window.location.href)) {
+        let tickets = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]');
+        if (tickets.length === 0 || !tickets[0].hasAttribute("hasStockAdvice")) {
+            addStockAdviceForStock();
+        }
+      } else if (stockListPageUrlRegexp.test(window.location.href)) {
+        let ticketCount = Number(new URLSearchParams(window.location.href).get('end'));
+        let tickets = document.querySelectorAll('tr[class*="Table-module__row_clickable"]');
+        if (tickets.length == 0 || ticketCount != 0 && ticketCount != tickets.length) {
+            window.setTimeout(addStockAdviceInWindow, 200);
+        } else {
+            Array.from(tickets).forEach(addStockAdvice);
+        }
       }
-    } else if (stockListPageUrlRegexp.test(window.location.href)) {
-      let ticketCount = Number(new URLSearchParams(window.location.href).get('end'));
-      let tickets = document.querySelectorAll('tr[class*="Table-module__row_clickable"]');
-      if (tickets.length == 0 || ticketCount != 0 && ticketCount != tickets.length) {
-          window.setTimeout(addStockAdviceInWindow, 200);
-      } else {
-          Array.from(tickets).forEach(addStockAdvice);
-      }
-    }
 }
 
 addStockAdviceInWindow();
