@@ -14,8 +14,6 @@
    limitations under the License.
 */
 
-let adviceWidth = (document.getElementsByTagName("header")[0].clientWidth - 1200) / 2 + 40;
-
 document.head.insertAdjacentHTML("beforeend",
 `<style>
     .stock-analytics-container {
@@ -23,7 +21,6 @@ document.head.insertAdjacentHTML("beforeend",
         left: 0;
         top: -1px;
         margin-left: 100%;
-        width: ` + adviceWidth + `px;
         overflow: hidden;
         opacity: .3;
     }
@@ -114,9 +111,12 @@ let addStockAdvice = (e) => {
         let lastElementOfRow = cellElements[cellElements.length - 1];
         lastElementOfRow.style.position = "relative";
 
+        let adviceWidth = (document.getElementsByTagName("header")[0].clientWidth - 1200) / 2 + 40;
+
         e.addEventListener("mouseenter", function(event) {
             let container = document.createElement("div");
             container.setAttribute("class", "stock-analytics-container");
+            container.setAttribute("style", `width: ` + adviceWidth + `px;`)
             lastElementOfRow.appendChild(container);
             let containerWrapper = document.createElement("div");
             containerWrapper.setAttribute("class", "stock-analytics-container-wrapper");
@@ -228,6 +228,9 @@ function setUserAdviceLinksIfNull() {
 }
 
 function addStockAdviceInWindow() {
+      if (document.getElementsByTagName("header").length === 0) {
+          window.setTimeout(addStockAdviceInWindow, 200);
+      }
       setUserAdviceLinksIfNull();
       if (stockPageUrlRegexp.test(window.location.href)) {
         let tickets = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]');
