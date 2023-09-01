@@ -101,7 +101,7 @@ let adviceLinks = {
 
 let addStockAdvice = (e) => {
     if (!e.hasAttribute("hasStockAdvice") && e.querySelectorAll('a[class*="Link-module__link"]')[0].href.includes("/stocks/")) {
-        var stockTagBlock = e.querySelectorAll('div[class^="Caption__subcaption"]')[0];
+        var stockTagBlock = e.querySelectorAll('div[class^="SecurityRowOld__ticker_"]')[0];
         if (stockTagBlock === undefined) {
           stockTagBlock = e.querySelectorAll('div[class^="PortfolioTable__infoItem"]')[0];
         }
@@ -140,13 +140,14 @@ let addStockAdvice = (e) => {
 };
 
 function addStockAdviceForStock() {
-    if (document.querySelectorAll('div[class^="SecurityPriceDetails__favorites"]').length === 0) {
+    if (document.querySelectorAll('div[class^="SecurityPrice"]').length === 0) {
         window.setTimeout(addStockAdviceForStock, 1000);
+          console.log(tickets);
     } else {
-        let stockTag = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].textContent;
+        let stockTag = document.querySelectorAll('span[class^="SecurityHeader__ticker_"]')[0].textContent;
 
         createMapOfTaggedLinks(stockTag, function(taggedAdviceLinks) {
-          let parent = document.querySelectorAll('div[class^="Column-module__column_"]')[1].children[0].children[1].children[1];
+          let parent = document.querySelectorAll('div[class^="StickyBlock__sidebarContent_"]')[0];
           let container = document.createElement("div");
           let container2 = document.createElement("span");
           container2.textContent = "Ссылки";
@@ -157,12 +158,12 @@ function addStockAdviceForStock() {
           container.setAttribute("class", "stock-analytics-container__page");
 
           if (parent.parentNode.querySelectorAll('div[class*="stock-analytics-container"]').length === 0) {
-            parent.parentNode.insertBefore(container, parent);
+            parent.appendChild(container);
 
             addLinkToAdvice(container, taggedAdviceLinks, true);
             addLinkToAllAdvices(container, taggedAdviceLinks);
 
-            document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]')[0].setAttribute("hasStockAdvice", "");
+            document.querySelectorAll('span[class^="SecurityHeader__ticker_"]')[0].setAttribute("hasStockAdvice", "");
           }
         });
     }
@@ -233,7 +234,7 @@ function addStockAdviceInWindow() {
       }
       setUserAdviceLinksIfNull();
       if (stockPageUrlRegexp.test(window.location.href)) {
-        let tickets = document.querySelectorAll('span[class^="SecurityHeaderPure__ticker_"]');
+        let tickets = document.querySelectorAll('span[class^="SecurityHeader__ticker_"]');
         if (tickets.length === 0 || !tickets[0].hasAttribute("hasStockAdvice")) {
             addStockAdviceForStock();
         }

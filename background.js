@@ -16,6 +16,6 @@
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (changeInfo.url) {
-        chrome.tabs.executeScript(tab.id, {file: "reloadContentScript.js"});
+        chrome.scripting.executeScript(tab.id, {file: "reloadContentScript.js"});
     }
-}); 
+});

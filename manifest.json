@@ -3,10 +3,9 @@
   "short_name": "Stock Analytics",
   "version": "1.2.2",
   "description": "Tinkoff Stock Analytics",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "background": {
-    "scripts": ["background.js", "reloadContentScript.js"],
-    "persistent": false
+    "service_worker": "background.js"
   },
   "content_scripts": [{
     "matches": [
@@ -18,13 +17,16 @@
     "js": ["contentScript.js"]
   }],
   "permissions": [
-    "https://www.tinkoff.ru/invest/stocks/",
-    "https://www.tinkoff.ru/invest/favorites/",
-    "https://www.tinkoff.ru/invest/broker_account/",
-    "https://www.tinkoff.ru/invest/portfolio/",
-    "storage"
+    "storage",
+    "scripting"
   ],
-  "browser_action": {
+  "host_permissions": [
+    "*://www.tinkoff.ru/invest/stocks*",
+    "*://www.tinkoff.ru/invest/favorites*",
+    "*://www.tinkoff.ru/invest/broker_account/",
+    "*://www.tinkoff.ru/invest/portfolio/"
+  ],
+  "action": {
     "default_title": "Stock Analytics"
   },
   "icons": {
